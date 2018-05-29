@@ -16,7 +16,6 @@
 
     var tela = document.getElementsByTagName("canvas")[0];
     var ctx = tela.getContext("2d");
-    var G = 0;
     var imageLibrary = new ImageLibrary();
     imageLibrary.load("menu", "menu.jpg");
     imageLibrary.load("fundo-fase", "fundo-fase.jpg");
@@ -29,46 +28,14 @@
 
     var dt = anterior = 0;
     var player = new Tank();
+    var player_2 = new Tank();
     var playerVel = 175;
     var tiroVel = 400;
-    player.tiro = 0;
-    var tiros = [];
     var estado = 3;
-
-    var melhorPontuacao = 0;
-    //var estadoJogada = false;     //Se perdeu ou não
-
-    var tempoInicioPartida = 5;   //Tempo até o objeto começar a cair
     var tempoGameOver = 5;
-
-    var inimigos = [];
-    var inimigosVel = 150;
-
-    //Energia
-    var energiaRectExt = new Sprite();
-    var energiaRectInt = new Sprite();
-    energiaRectExt.w = 102;
-    energiaRectExt.y = 20;
-    energiaRectExt.colorBG = "black";
-    energiaRectExt.colorBorder = "white";
-    energiaRectExt.x = 8;
-    energiaRectExt.y = 32;
-    energiaRectInt.w = 100;
-    energiaRectInt.h = 13;
-    energiaRectInt.x = 9;
-    energiaRectInt.y = 33;
-    energiaRectInt.colorBG = "green";
-    energiaRectInt.borderSize = 0;
-
-
-    //Estabelece ordem e tempo para os inimigos descerem
-    var tempoAumentarVelocidade = 15;
-    var tempoEspera = 1;
-    var inimigosDescerem = 1;
 
     //Main Menu campos
     var fontMainMenu = "30px Arial Black";
-    //var wordsColor = "white";
     var wordsColor = "rgb(178, 148, 88)";
     var alignMainMenu = "center";
     var stateMainMenu = 0;
@@ -98,135 +65,124 @@
           case 0:
             player = new Tank();
             player.tiro = 0;
+            player_2 = new Tank();
             player.x = tela.width/2 - 15;
             player.y = tela.height-30;
-            tiros.splice(0,tiros.length);
+            player_2.x = 100 - 15;
+            player_2.y = 100-30;
             estado = 1;
 
             break;
           case 1:
-            tiros.splice(0,tiros.length);
-            if(player.vidas == 1){
-              estado = 4;
-            }
-            else{
-              if(player.energia == 0)
-                player.vidas--;
-              tempoAumentarVelocidade = 15;
-              inimigosVel = 150;
-              controlaVelocidadeInimigos(inimigosVel);
-              player.x = tela.width/2 - 15;
-              player.y = tela.height-30;
-              player.energia = 100;
-              energiaRectInt.w = player.energia;
-              inimigos.splice(0,inimigos.length);
-              estado = 2;
-            }
-            break;
-          case 2:
             limparTela();
             imageLibrary.drawSize(ctx, "fundo-fase", 0, 0, tela.width, tela.height);
-            //player.tiro = player.tiro - dt;
             ctx.font = "20px Arial Black";
-            ctx.fillStyle = "white";
             ctx.textAlign = alignMainMenu;
             ctx.lineWidth = 2;
             ctx.strokeStyle = "black";
-            ctx.strokeText("Energia: ", 55,20);
-            ctx.fillText("Energia: ", 55,20);
-            ctx.strokeText("Pontos: ", tela.width - 105,50);
-            ctx.fillText("Pontos: ", tela.width - 105,50);
-            ctx.strokeText(player.pontos, tela.width - 30, 50);
-            ctx.fillText(player.pontos, tela.width - 30, 50);
-            ctx.strokeText("Vidas:  "+ player.vidas, tela.width - 70, 20);
-            ctx.fillText("Vidas:  "+ player.vidas, tela.width - 70, 20);
+            ctx.fillStyle = "red";
+            ctx.strokeText("Player 1", 60, 20);
+            ctx.fillText("Player 1", 60, 20);
+            ctx.strokeText("Vidas:  "+ player.vidas, 55, 50);
+            ctx.fillText("Vidas:  "+ player.vidas, 55, 50);
+            ctx.fillStyle = "green";
+            ctx.strokeText("Player 2", tela.width - 70, 20);
+            ctx.fillText("Player 2", tela.width - 70, 20);
+            ctx.strokeText("Vidas:  "+ player_2.vidas, tela.width - 105, 50);
+            ctx.fillText("Vidas:  "+ player_2.vidas, tela.width - 105, 50);
 
-            if(tempoEspera > 0){
-              tempoEspera = tempoEspera - 0.7*dt
-            }
-            else{
-              tempoEspera = 1;
-              inimigosDescerem = Math.floor(Math.random() * 4);
-              criarInimigos(inimigosDescerem);
-              moveInimigos(inimigosDescerem);
-            }
-
-            for (var i = 0; i < inimigos.length; i++) { //Move e coloca os inimigos na parte de cima da tela
-              if(inimigos[i].y > tela.height){
-                inimigos[i].y = -inimigos[i].h;
-              }
-              else
-                inimigos[i].mover(dt);
-            }
             player.impoeLimites(0, 0, tela.width, tela.height);
+            player_2.impoeLimites(0, 0, tela.width, tela.height);
             player.moverPlayer(dt);
+            player_2.moverPlayer(dt);
             player.tiro = player.tiro - dt;
-            for (var i = 0; i < tiros.length; i++) {
-                tiros[i].mover(dt);
+            player_2.tiro = player_2.tiro - dt;
+
+            for (var i = 0; i < player.tiros.length; i++) {
+                player.tiros[i].mover(dt);
             }
 
-            for(var i = 0; i < tiros.length; i++){  //Teste da colisão dos tiros com os asteroides
-              if(tiros[i].y >= 0){
-                var atingiu = false;
-                for(var j = 0; j < inimigos.length; j++){
-                  if(tiros[i].colidiuCom(inimigos[j])){
-                    inimigos.splice(j,1);
-                    player.pontos += 50;
-                    atingiu = true;
-                  }
-                }
-                if (atingiu) {
-                  atingiu = null;
-                  tiros.splice(i,1);
+            for (var i = 0; i < player_2.tiros.length; i++) {
+                player_2.tiros[i].mover(dt);
+            }
+
+            for(var i = 0; i < player.tiros.length; i++){         //Teste da colisão dos tiros do primeiro player com as armadilhas
+              for(var j = 0; j < armadilhas.length; j++){
+                if(player.tiros[i].colidiuCom(armadilhas[j])){
+                  armadilhas.splice(j, 1);
+                  player.tiros.splice(i, 1);
                 }
               }
-              else
-                tiros.splice(i,1);
+              if(player.tiros[i].colidiuCom(player_2)){           //Tiro colidiu com o outro player
+                player.tiros.splice(i, 1);
+                player_2.imunidade = 3;
+                player_2.vidas--;
+              }
             }
 
-            for(var i = 0; i < inimigos.length; i++){
-              if(player.imunidade <= 0 && player.colidiuCom(inimigos[i])){
+            for(var i = 0; i < player_2.tiros.length; i++){       //Teste da colisão dos tiros do segundo player com as armadilhas
+              for(var j = 0; j < armadilhas.length; j++){         //Colisao com as armadilhas
+                if(player_2.tiros[i].colidiuCom(armadilhas[j])){
+                  armadilhas.splice(j, 1);
+                  player_2.tiros.splice(i, 1);
+                }
+              }
+              if(player_2.tiros[i].colidiuCom(player)){           //Tiro colidiu com o outro player
+                player_2.tiros.splice(i, 1);
                 player.imunidade = 3;
-                if(player.energia > 0)
-                  player.energia = player.energia - 30;
-                if(player.energia < 0)
-                  player.energia = 0;
-                energiaRectInt.w = player.energia;
-                break;
-              }
-              else{
-                player.cor = "grey";
+                player.vidas--;
               }
             }
 
-            for (var i = 0; i < tiros.length; i++) {
-              if(tiros[i].y>=0){
-                tiros[i].desenhar(ctx);
+            for(var i = 0; i < armadilhas.length; i++){
+              if(player.imunidade <= 0 && player.colidiuCom(armadilhas[i])){
+                player.imunidade = 3;
+                player.vidas--;
+                /**
+                * Perde vida
+                * Voltar pra posição inicial
+                * Não posso dar break porque preciso verificar se o outro player tbm colidiu com alguma armadilha
+                */
+              }
+              if(player_2.imunidade <= 0 && player_2.colidiuCom(armadilhas[i])){
+                player_2.imunidade = 3;
+                player_2.vidas--;
+                /**
+                * Voltar pra posição inicial
+                * Não posso dar break porque preciso verificar se o outro player tbm colidiu com alguma armadilha
+                */
+              }
+            }
+
+            for (var i = 0; i < player.tiros.length; i++) {
+              if((player.tiros[i].x >= 0) && (player.tiros[i].x <= tela.width) && (player.tiros[i].y >= 0) && (player.tiros[i].y <= tela.height)){
+                player.tiros[i].desenhar(ctx);
               }
               else{                     //Tiros que estão fora do canvas são removidos pois não terão mais funcionalidade
-                tiros.splice(i,1);
+                player.tiros.splice(i,1);
               }
             }
 
-            for (var i = 0; i < inimigos.length; i++) {
-              inimigos[i].desenharInimigo(ctx);
+            for (var i = 0; i < player_2.tiros.length; i++) {
+              if((player_2.tiros[i].x >= 0) && (player_2.tiros[i].x <= tela.width) && (player_2.tiros[i].y >= 0) && (player_2.tiros[i].y <= tela.height)){
+                player_2.tiros[i].desenhar(ctx);
+              }
+              else{                     //Tiros que estão fora do canvas são removidos pois não terão mais funcionalidade
+                player_2.tiros.splice(i,1);
+              }
             }
-            //player.desenhar(ctx);
+
             player.desenharImagem(ctx);
-            energiaRectExt.desenhar(ctx);
-            energiaRectInt.desenhar(ctx);
-            tempoAumentarVelocidade = tempoAumentarVelocidade - 0.7*dt;
-            if(tempoAumentarVelocidade <= 0){
-              inimigosVel += 20;
-              controlaVelocidadeInimigos(inimigosVel);
-              tempoAumentarVelocidade = 15;
-            }
-            if(player.energia == 0){
-              estado = 1;
+            player_2.desenharImagem(ctx);
+
+            if((player.vidas == 0)||(player_2.vidas == 0)){
+              player.tiros.splice(0,tiros.length);
+              player_2.tiros.splice(0,tiros.length);
+              estado = 4;
             }
             break;
 
-          case 3:         //Main menu
+          case 2:         //Main menu
             limparTela();
             imageLibrary.drawSize(ctx, "menu", 0, 0, tela.width,tela.height);
             ctx.fillStyle = wordsColor;
@@ -255,7 +211,7 @@
             }
 
             break;
-          case 4:
+          case 3:
             limparTela();
             ctx.fillStyle = "white";
             ctx.textAlign = alignMainMenu;
@@ -269,16 +225,14 @@
                 tempoGameOver = tempoGameOver - 0.7*dt;
             }
             else{
-                if(player.pontos > melhorPontuacao)
-                  melhorPontuacao = player.pontos;
-                inimigos.splice(0,inimigos.length);
-                player.pontos = null;   //Limpa o objeto
+                player = null;
+                player_2 = null;
                 tempoGameOver = 5;
-                estado = 3;
+                estado = 2;
             }
 
             break;
-          case 5:
+          case 3:
             limparTela();
             break;
           default:
