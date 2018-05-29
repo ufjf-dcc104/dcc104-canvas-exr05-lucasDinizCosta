@@ -288,11 +288,34 @@
                 player.tiro = 0.5;
               }
               break;
-            case 38:
+            case 38:          //Cima
               player.vy = -playerVel;
               break;
-            case 40:
+            case 40:          //Baixo
               player.vy = +playerVel;
+              break;
+            case 65:            //A
+              player_2.vx = -playerVel;
+              break;
+            case 68:            //D
+              player_2.vx = +playerVel;
+              break;
+            case 16:            //Espaço
+              if(player_2.tiro <= 0){
+                //console.log(player.tiro);
+                var tiro = new Sprite();
+                tiro.posicionarTiro(player_2, tiroVel);
+                player_2.tiros.push(tiro);
+                audioLibrary.play("photon-Gunshot");
+                tiro.colorBG = 'red';
+                player_2.tiro = 0.5;
+              }
+              break;
+            case 87:            //W
+              player_2.vy = -playerVel;
+              break;
+            case 83:            //S
+              player_2.vy = +playerVel;
               break;
             case 27:      //Pressionar o Esq
               stateMainMenu = 0;
@@ -351,6 +374,14 @@
         case 38:
         case 40:
           player.vy = 0;
+          break;
+        case 65:
+        case 68:
+          player_2.vx = 0;
+          break;
+        case 87:
+        case 83:
+          player_2.vy = 0;
           break;
         default:
       }
