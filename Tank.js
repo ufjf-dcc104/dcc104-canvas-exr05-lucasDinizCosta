@@ -5,12 +5,8 @@ function Tank() {
   this.h = 30;
   this.vx = 0;
   this.vy = 0;
-  this.ax = 0;
-  this.ay = 0;
   this.acel = 0;
   this.cor = "grey";
-  this.vento = 50;
-  this.pontos = 0;
   this.vidas = 3;
   this.energia = 100;
   this.imunidade = 0;
