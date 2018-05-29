@@ -12,6 +12,7 @@ function Tank() {
   this.imunidade = 0;
   this.tiros = [];                          //tiros presentes na cena
   this.tiro = 0;                            //tempo entre os tiros
+  this.sentido = 0;                        //0-> cima, 1-> direita, 2->baixo 3->esquerda
 }
 
 Tank.prototype.desenhar = function (ctx) {

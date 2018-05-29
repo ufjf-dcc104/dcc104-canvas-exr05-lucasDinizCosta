@@ -50,28 +50,28 @@ Sprite.prototype.desenharInimigo = function (ctx) {
   ctx.closePath();*/
 }
 
-Sprite.prototype.posicionarTiro = function (player, tiroVel) {
+Sprite.prototype.posicionarTiro = function (jogador, tiroVel) {
   this.w = 5;
   this.h = 5;
-  switch (player.sentido) {
+  switch (jogador.sentido) {
     case 0:     //Cima
-      this.x = player.x + player.w/2 - 2;
-      this.y = player.y - 6;
+      this.x = jogador.x + jogador.w/2 - 2;
+      this.y = jogador.y - 6;
       this.vy = -tiroVel;
       break;
     case 1:   //Direita
-      this.x = player.x + player.w + 6;
-      this.y = player.y + player.h/2;
+      this.x = jogador.x + jogador.w + 6;
+      this.y = jogador.y + jogador.h/2;
       this.vx = tiroVel;
       break;
     case 2:   //Baixo
-      this.x = player.x + player.w/2 -2;
-      this.y = player.y + player.h + 6;
+      this.x = jogador.x + jogador.w/2 -2;
+      this.y = jogador.y + jogador.h + 6;
       this.vy = tiroVel;
       break;
     case 3:   //Esquerda
-      this.x = player.x - 6;
-      this.y = player.y + player.h/2 - 2;
+      this.x = jogador.x - 6;
+      this.y = jogador.y + jogador.h/2 - 2;
       this.vx = -tiroVel;
       break;
     default:

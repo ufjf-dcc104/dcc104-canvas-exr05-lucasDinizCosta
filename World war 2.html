@@ -117,6 +117,9 @@
                 }
               }
               if(player.tiros[i].colidiuCom(player_2)){           //Tiro colidiu com o outro player
+                console.log("FOI    ---  player 2 x: "+ player_2.x + "  player 2 y: " + player_2.y);
+                console.log("tiro x: "+ player.tiros[i].x + "  tiro y: " + player.tiros[i].y);
+
                 player.tiros.splice(i, 1);
                 player_2.imunidade = 3;
                 player_2.vidas--;
@@ -181,7 +184,7 @@
             if((player.vidas == 0)||(player_2.vidas == 0)){
               player.tiros.splice(0,player.tiros.length);
               player_2.tiros.splice(0,player_2.tiros.length);
-              estado = 4;
+              estado = 3;
             }
             break;
 
@@ -221,9 +224,14 @@
             ctx.font = "40px Arial Black";
             ctx.lineWidth = 2;
             ctx.strokeStyle = "black";
-            ctx.font = "40px Arial Black";
-            ctx.strokeText("GAME OVER", tela.width/2, tela.height/2);
-            ctx.fillText("GAME OVER", tela.width/2, tela.height/2);
+            if(player.vidas > player_2.vidas){
+              ctx.strokeText("Vitória do player 1", tela.width/2, tela.height/2);
+              ctx.fillText("Vitória do player 1", tela.width/2, tela.height/2);
+            }
+            else{
+              ctx.strokeText("Vitória do player 2", tela.width/2, tela.height/2);
+              ctx.fillText("Vitória do player 2", tela.width/2, tela.height/2);
+            }
             if(tempoGameOver >= 0){
                 tempoGameOver = tempoGameOver - 0.7*dt;
             }
@@ -247,38 +255,6 @@
       requestAnimationFrame(passo);
     }
 
-    function criarInimigos(numero){       //Cria os inimigos parados
-      for(var i = 0; i < numero; i++){
-        var inimigo = new Sprite();
-        inimigo.x = Math.floor(Math.random() * (tela.width - player.w));
-        inimigo.y = -30;
-        //inimigo.vy = 150;
-        //inimigo.rotacionar(ctx, 90);
-        inimigos.push(inimigo);
-      }
-    }
-
-    function moveInimigos(numero){
-      var contador = 0;
-      for(var i = 0; i < inimigos.length; i++){
-        if(inimigos[i].vy == 0 && contador < numero){
-          inimigos[i].vy = inimigosVel;
-          contador++;
-        }
-        if(contador == numero){
-          break;
-        }
-      }
-    }
-
-    function controlaVelocidadeInimigos(vel){
-      for(var i = 0; i < inimigos.length; i++){
-        if(inimigos[i].vy == inimigosVel)
-          inimigos[i].vy = vel;
-      }
-      inimigosVel = vel;
-    }
-
 
     function controlaVelocidadePlayer(vel){
       playerVel = vel;
@@ -292,7 +268,7 @@
     }
 
     addEventListener("keydown", function(e){
-      console.log(e.keyCode);
+      //console.log(e.keyCode);
       if (estado != 2) {
           switch (e.keyCode) {
             case 37:            //esquerda
