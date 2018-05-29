@@ -75,6 +75,7 @@ Tank.prototype.mover = function (dt) {
 }
 
 Tank.prototype.moverPlayer = function (dt) {
+    this.y = this.y + this.vy*dt;
     this.x = this.x + this.vx*dt;
     this.imunidade = this.imunidade - 1*dt;
 }
@@ -88,12 +89,12 @@ Tank.prototype.impoeLimites = function(x, y, w, h){
     this.x = x + w - this.w;
     this.vx = 0;
   }
-  if(this.y - this.h< y){
-    this.y = 0 + this.h;
+  if(this.y < y){
+    this.y = y;
     this.vy = 0;
   }
-  if(this.y > y + h){
-    this.y = y + h;
+  if(this.y+this.h > y + h){
+    this.y = y + h - this.h;
     this.vy = 0;
   }
 };

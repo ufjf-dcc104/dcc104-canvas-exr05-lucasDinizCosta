@@ -362,10 +362,10 @@
               }
               break;
             case 38:
-              //player.ay = -400;
+              player.vy = -playerVel;
               break;
             case 40:
-              //player.ay = +100;
+              player.vy = +playerVel;
               break;
             case 27:      //Pressionar o Esq
               stateMainMenu = 0;
@@ -423,7 +423,7 @@
           break;
         case 38:
         case 40:
-          //player.ay = 0;
+          player.vy = 0;
           break;
         default:
       }
