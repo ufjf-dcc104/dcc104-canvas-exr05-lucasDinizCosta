@@ -64,14 +64,18 @@
       else{
         switch (estado) {
           case 0:
+            //Cria os players e posiciona no mapa
+
             player = new Tank();
             player.tiro = 0;
             player_2 = new Tank();
-            player.x = tela.width/2 - 15;
-            player.y = tela.height-30;
-            player_2.x = 100 - 15;
-            player_2.y = 100-30;
+            player.x = player.posInicialX = (tela.width/2 - 15);
+            player.y = player.posInicialY = (tela.height - 30);
+            player_2.x = player_2.posInicialX = (100 - 15);
+            player_2.y = player_2.posInicialY = (100 - 30);
 
+            //Cria armadilhas
+            for()
 
             estado = 1;
 
@@ -93,7 +97,6 @@
             ctx.fillText("Player 2", tela.width - 70, 20);
             ctx.strokeText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
             ctx.fillText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
-
             player.impoeLimites(0, 0, tela.width, tela.height);
             player_2.impoeLimites(0, 0, tela.width, tela.height);
             player.moverPlayer(dt);
@@ -117,9 +120,6 @@
                 }
               }
               if(player.tiros[i].colidiuCom(player_2)){           //Tiro colidiu com o outro player
-                console.log("FOI    ---  player 2 x: "+ player_2.x + "  player 2 y: " + player_2.y);
-                console.log("tiro x: "+ player.tiros[i].x + "  tiro y: " + player.tiros[i].y);
-
                 player.tiros.splice(i, 1);
                 player_2.imunidade = 3;
                 player_2.vidas--;
@@ -144,19 +144,14 @@
               if(player.imunidade <= 0 && player.colidiuCom(armadilhas[i])){
                 player.imunidade = 3;
                 player.vidas--;
-                /**
-                * Perde vida
-                * Voltar pra posição inicial
-                * Não posso dar break porque preciso verificar se o outro player tbm colidiu com alguma armadilha
-                */
+                player.x = player.posInicialX;
+                player.y = player.posInicialY;
               }
               if(player_2.imunidade <= 0 && player_2.colidiuCom(armadilhas[i])){
                 player_2.imunidade = 3;
                 player_2.vidas--;
-                /**
-                * Voltar pra posição inicial
-                * Não posso dar break porque preciso verificar se o outro player tbm colidiu com alguma armadilha
-                */
+                player_2.x = player_2.posInicialX;
+                player_2.y = player_2.posInicialY;
               }
             }
 

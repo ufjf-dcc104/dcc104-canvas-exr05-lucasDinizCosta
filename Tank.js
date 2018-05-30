@@ -13,6 +13,8 @@ function Tank() {
   this.tiros = [];                          //tiros presentes na cena
   this.tiro = 0;                            //tempo entre os tiros
   this.sentido = 0;                        //0-> cima, 1-> direita, 2->baixo 3->esquerda
+  this.posInicialX = 0;                   //Posição inicial do tanque
+  this.posInicialY = 0;
 }
 
 Tank.prototype.desenhar = function (ctx) {
@@ -47,21 +49,6 @@ Tank.prototype.desenharImagem = function (ctx) {
   else{
     imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
   }
-}
-
-Tank.prototype.desenharInimigo = function (ctx) {
-  ctx.fillStyle = this.cor;
-  ctx.strokeStyle = 'white';
-  ctx.lineWidth = 2;
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(this.x, this.y);
-  ctx.lineTo(this.x + this.w/2, this.y + this.h);
-  ctx.lineTo(this.x + this.w, this.y);
-  ctx.lineTo(this.x, this.y);
-  ctx.fill();
-  ctx.stroke();
-  ctx.closePath();
 }
 
 Tank.prototype.rotacionar = function (ctx, graus){
