@@ -26,12 +26,12 @@ Sprite.prototype.desenhar = function (ctx) {
   ctx.strokeRect(this.x, this.y, this.w, this.h);
 }
 
-Sprite.prototype.desenharInimigo = function (ctx) {
-  this.w = 30;
-  this.h = 30;
-  //imageLibrary.drawSize(ctx, "asteroides", this.x, this.y, this.w, this.h);
+Sprite.prototype.desenharArmadilha = function (ctx) {
+  this.w = 32;
+  this.h = 32;
+
   //imageLibrary.drawClipAngle(ctx, "asteroides", this.sx, this.sy, this.w, this.h, this.x, this.y, this.ang);
-  imageLibrary.drawClip(ctx, "asteroides", this.sx, this.sy, this.w, this.h, this.x, this.y);
+  imageLibrary.draw(ctx, "tijolo-laser", this.x, this.y);
 
   //console.log("TESTE");
   /*ctx.fillStyle = this.cor;

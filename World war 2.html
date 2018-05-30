@@ -21,6 +21,9 @@
     imageLibrary.load("fundo-fase", "fundo-fase.jpg");
     imageLibrary.load("player-ship", "player_ship.png");
     imageLibrary.load("asteroides","Asteroides.png");
+    imageLibrary.load("tijolo-espinho","tijolo-espinho.png");
+    imageLibrary.load("tijolo-laser","tijolo-laser.png");
+    imageLibrary.load("asteroides","Asteroides.png");
 
     var audioLibrary = new AudioLibrary();
     audioLibrary.load("photon-Gunshot","Photon_Gunshot.mp3");
@@ -75,7 +78,13 @@
             player_2.y = player_2.posInicialY = (100 - 30);
 
             //Cria armadilhas
-            for()
+            //Teste
+            for(var i = 0; i < 5; i++){
+              var armadilha = new Sprite();
+              armadilha.x = Math.floor(Math.random() * (tela.width - 32));
+              armadilha.y = Math.floor(Math.random() * (tela.height - 32));
+              armadilhas.push(armadilha);
+            }
 
             estado = 1;
 
@@ -83,20 +92,6 @@
           case 1:
             limparTela();
             imageLibrary.drawSize(ctx, "fundo-fase", 0, 0, tela.width, tela.height);
-            ctx.font = "20px Arial Black";
-            ctx.textAlign = alignMainMenu;
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = "black";
-            ctx.fillStyle = "red";
-            ctx.strokeText("Player 1", 60, 20);
-            ctx.fillText("Player 1", 60, 20);
-            ctx.strokeText("Vidas:  "+ player.vidas, 55, 50);
-            ctx.fillText("Vidas:  "+ player.vidas, 55, 50);
-            ctx.fillStyle = "blue";
-            ctx.strokeText("Player 2", tela.width - 70, 20);
-            ctx.fillText("Player 2", tela.width - 70, 20);
-            ctx.strokeText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
-            ctx.fillText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
             player.impoeLimites(0, 0, tela.width, tela.height);
             player_2.impoeLimites(0, 0, tela.width, tela.height);
             player.moverPlayer(dt);
@@ -112,32 +107,43 @@
                 player_2.tiros[i].mover(dt);
             }
 
+            var atingiu = false;                                  //Variavel para o teste da colisao do tiro com armadilha, ao colidir com uma armadilha ele estava sendo removido e abaixo estava comparando um objeto vazio com o player
+
             for(var i = 0; i < player.tiros.length; i++){         //Teste da colisão dos tiros do primeiro player com as armadilhas
               for(var j = 0; j < armadilhas.length; j++){
                 if(player.tiros[i].colidiuCom(armadilhas[j])){
-                  armadilhas.splice(j, 1);
                   player.tiros.splice(i, 1);
+                  atingiu = true;
+                  break;
+                }
+
+              }
+              if(atingiu == false){
+                if(player_2.imunidade <= 0 && player.tiros[i].colidiuCom(player_2)){           //Tiro colidiu com o outro player
+                  player.tiros.splice(i, 1);
+                  player_2.imunidade = 3;
+                  player_2.vidas--;
                 }
               }
-              if(player.tiros[i].colidiuCom(player_2)){           //Tiro colidiu com o outro player
-                player.tiros.splice(i, 1);
-                player_2.imunidade = 3;
-                player_2.vidas--;
-              }
+              atingiu = false;
             }
-
+            atingiu = false;
             for(var i = 0; i < player_2.tiros.length; i++){       //Teste da colisão dos tiros do segundo player com as armadilhas
               for(var j = 0; j < armadilhas.length; j++){         //Colisao com as armadilhas
                 if(player_2.tiros[i].colidiuCom(armadilhas[j])){
-                  armadilhas.splice(j, 1);
                   player_2.tiros.splice(i, 1);
+                  atingiu = true;
+                  break;
                 }
               }
-              if(player_2.tiros[i].colidiuCom(player)){           //Tiro colidiu com o outro player
-                player_2.tiros.splice(i, 1);
-                player.imunidade = 3;
-                player.vidas--;
+              if(atingiu == false){
+                if(player.imunidade <= 0 && player_2.tiros[i].colidiuCom(player)){           //Tiro colidiu com o outro player
+                  player_2.tiros.splice(i, 1);
+                  player.imunidade = 3;
+                  player.vidas--;
+                }
               }
+              atingiu = false;
             }
 
             for(var i = 0; i < armadilhas.length; i++){
@@ -153,6 +159,10 @@
                 player_2.x = player_2.posInicialX;
                 player_2.y = player_2.posInicialY;
               }
+            }
+
+            for (var i = 0; i < armadilhas.length; i++) {
+              armadilhas[i].desenharArmadilha(ctx);
             }
 
             for (var i = 0; i < player.tiros.length; i++) {
@@ -172,13 +182,27 @@
                 player_2.tiros.splice(i,1);
               }
             }
-
             player.desenharImagem(ctx);
             player_2.desenharImagem(ctx);
+            ctx.font = "20px Arial Black";
+            ctx.textAlign = alignMainMenu;
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = "black";
+            ctx.fillStyle = "red";
+            ctx.strokeText("Player 1", 60, 20);
+            ctx.fillText("Player 1", 60, 20);
+            ctx.strokeText("Vidas:  "+ player.vidas, 55, 50);
+            ctx.fillText("Vidas:  "+ player.vidas, 55, 50);
+            ctx.fillStyle = "blue";
+            ctx.strokeText("Player 2", tela.width - 70, 20);
+            ctx.fillText("Player 2", tela.width - 70, 20);
+            ctx.strokeText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
+            ctx.fillText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
 
             if((player.vidas == 0)||(player_2.vidas == 0)){
               player.tiros.splice(0,player.tiros.length);
               player_2.tiros.splice(0,player_2.tiros.length);
+              armadilhas.splice(0,armadilhas.length);
               estado = 3;
             }
             break;
@@ -313,8 +337,11 @@
               player_2.vy = +playerVel;
               break;
             case 27:      //Pressionar o Esq
+              player.tiros.splice(0,player.tiros.length);
+              player_2.tiros.splice(0,player_2.tiros.length);
+              armadilhas.splice(0,armadilhas.length);
               stateMainMenu = 0;
-              estado = 3;
+              estado = 2;
               break;
             default:
           }
