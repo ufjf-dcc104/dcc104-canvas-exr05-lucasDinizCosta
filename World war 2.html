@@ -40,7 +40,7 @@
                                                           //sendo removido e abaixo estava comparando um objeto vazio com o player
 
     //Criação de fases
-    var numFases = 4;
+    var numFases = 3;
     var faseEscolhida = 0;
     var fases = [];
 
@@ -61,7 +61,7 @@
       * 4 - Game over;      //Exibe uma mensagem de game over na tela
       * 5 - Fechado;        //Tela preta
       ***************************************************/
-
+      criarFases();
 
     function passo(t) {
       dt = (t - anterior)/1000;
@@ -81,33 +81,11 @@
             player.tiro = 0;
             player_2 = new Tank();
             player_2.tiro = 0;
-
-            player.x = player.posInicialX = (tela.width/2 - 15);
-            player.y = player.posInicialY = (tela.height - 30);
-            player_2.x = player_2.posInicialX = (100 - 15);
-            player_2.y = player_2.posInicialY = (100 - 30);
-            criarFases();
-            selecionarFase(player, player_2);
-
-
-
-
-            //Cria armadilhas
-            //Teste
-            /*for(var i = 0; i < 10; i++){
-              var armadilha = new Sprite();
-              armadilha.x = Math.floor(Math.random() * (tela.width - 32));
-              armadilha.y = Math.floor(Math.random() * (tela.height - 32));
-              while((player.colidiuCom(armadilha)==true)||(player_2.colidiuCom(armadilha)==true)){
-                armadilha.x = Math.floor(Math.random() * (tela.width - 32));
-                armadilha.y = Math.floor(Math.random() * (tela.height - 32));
-              }
-              armadilhas.push(armadilha);
-            }*/
-            //selecionaFase();
-            //4 tipos de fase
-            //criaFases();
-
+            selecionarFase();
+            player.x = player.posInicialX = 0;
+            player.y = player.posInicialY = 4*32;
+            player_2.x = player_2.posInicialX = 14*32;
+            player_2.y = player_2.posInicialY = 5*32;
             estado = 1;
 
             break;
@@ -297,20 +275,20 @@
     }
 
 
-    function selecionarFase(player, player_2){
-      faseEscolhida = Math.floor(Math.random()*(numFases-1));
+    function selecionarFase(){
+      faseEscolhida = Math.floor(Math.random()*(numFases));
+      console.log(faseEscolhida);
       switch(faseEscolhida){
         case 0:
-
+          armadilhas = fases[0].armadilhas;
           break;
         case 1:
-
+          armadilhas = fases[1].armadilhas;
           break;
         case 2:
-
+          armadilhas = fases[2].armadilhas;
           break;
         default:
-
       }
     }
 
@@ -318,18 +296,15 @@
       //TAMANHO DO MAPA - bloco 32x32
       // 15 blocos em X
       // 10 blocos em Y
-
-      //Fase 1
-      var fase1 = new Fase();
       player.x = player.posInicialX = 0;
       player.y = player.posInicialY = 4*32;
       player_2.x = player_2.posInicialX = 14*32;
       player_2.y = player_2.posInicialY = 5*32;
+      var fase1 = new Fase();
       fase1.posInicialXPlayer1 = 0;
       fase1.posInicialYPlayer1 = 4*32;
       fase1.posInicialXPlayer2 = 14*32;
       fase1.posInicialYPlayer2 = 5*32;
-
       criaArmadilhaPorBloco(fase1.armadilhas, 3, 1);
       criaArmadilhaPorBloco(fase1.armadilhas, 4, 1);
       criaArmadilhaPorBloco(fase1.armadilhas, 3, 2);
@@ -349,10 +324,12 @@
       criaArmadilhaPorBloco(fase1.armadilhas, 12, 9);
       criaArmadilhaPorBloco(fase1.armadilhas, 9, 5);
       criaArmadilhaPorBloco(fase1.armadilhas, 13, 1);
-      //armadilhas = fase1.armadilhas;
-
+      fases.push(fase1);
       var fase2 = new Fase();
-
+      fase2.posInicialXPlayer1 = 0;
+      fase2.posInicialYPlayer1 = 4*32;
+      fase2.posInicialXPlayer2 = 14*32;
+      fase2.posInicialYPlayer2 = 5*32;
       criaArmadilhaPorBloco(fase2.armadilhas, 0, 0);
       criaArmadilhaPorBloco(fase2.armadilhas, 0, 1);
       criaArmadilhaPorBloco(fase2.armadilhas, 0, 2);
@@ -373,23 +350,30 @@
       criaArmadilhaPorBloco(fase2.armadilhas, 12, 7);
       criaArmadilhaPorBloco(fase2.armadilhas, 7, 9);
       criaArmadilhaPorBloco(fase2.armadilhas, 7, 5);
-
-      armadilhas = fase2.armadilhas;
-      /*armadilhas[0].x = 120;
-      armadilhas[0].y = 42;
-      armadilhas[1].x = 120;
-      armadilhas[1].y = 74;
-      armadilhas[2].x = 152;
-      armadilhas[2].y = 42;
-      armadilhas[3].x = 120;
-      armadilhas[3].y = 106;*/
-
-
-      //Fase 2
-
-
-      //Fase 3
-
+      fases.push(fase2);
+      var fase3 = new Fase();
+      fase3.posInicialXPlayer1 = 0;
+      fase3.posInicialYPlayer1 = 4*32;
+      fase3.posInicialXPlayer2 = 14*32;
+      fase3.posInicialYPlayer2 = 5*32;
+      criaArmadilhaPorBloco(fase3.armadilhas, 0, 0);
+      criaArmadilhaPorBloco(fase3.armadilhas, 0, 1);
+      criaArmadilhaPorBloco(fase3.armadilhas, 0, 2);
+      criaArmadilhaPorBloco(fase3.armadilhas, 1, 2);
+      criaArmadilhaPorBloco(fase3.armadilhas, 2, 3);
+      criaArmadilhaPorBloco(fase3.armadilhas, 14, 3);
+      criaArmadilhaPorBloco(fase3.armadilhas, 13, 3);
+      criaArmadilhaPorBloco(fase3.armadilhas, 12, 4);
+      criaArmadilhaPorBloco(fase3.armadilhas, 14, 8);
+      criaArmadilhaPorBloco(fase3.armadilhas, 2, 6);
+      criaArmadilhaPorBloco(fase3.armadilhas, 5, 5);
+      criaArmadilhaPorBloco(fase3.armadilhas, 6, 2);
+      criaArmadilhaPorBloco(fase3.armadilhas, 8, 4);
+      criaArmadilhaPorBloco(fase3.armadilhas, 3, 8);
+      criaArmadilhaPorBloco(fase3.armadilhas, 8, 8);
+      criaArmadilhaPorBloco(fase3.armadilhas, 10, 2);
+      criaArmadilhaPorBloco(fase3.armadilhas, 10, 7);
+      fases.push(fase3);
     }
 
     function criaArmadilha(armadilhas, x, y){
