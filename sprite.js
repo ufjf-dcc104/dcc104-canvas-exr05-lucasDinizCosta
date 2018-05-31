@@ -61,7 +61,7 @@ Sprite.prototype.posicionarTiro = function (jogador, tiroVel) {
   this.h = 16;
   switch (jogador.sentido) {
     case 0:     //Cima
-      this.x = jogador.x + jogador.w/2 - 2;
+      this.x = jogador.x + jogador.w/2;
       this.y = jogador.y - 6;
       this.vy = -tiroVel;
       break;
@@ -71,13 +71,13 @@ Sprite.prototype.posicionarTiro = function (jogador, tiroVel) {
       this.vx = tiroVel;
       break;
     case 2:   //Baixo
-      this.x = jogador.x + jogador.w/2 -2;
+      this.x = jogador.x + jogador.w/2;
       this.y = jogador.y + jogador.h + 6;
       this.vy = tiroVel;
       break;
     case 3:   //Esquerda
       this.x = jogador.x - 6;
-      this.y = jogador.y + jogador.h/2 - 2;
+      this.y = jogador.y + jogador.h/2;
       this.vx = -tiroVel;
       break;
     default:
