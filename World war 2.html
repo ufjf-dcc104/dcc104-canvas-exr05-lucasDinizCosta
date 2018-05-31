@@ -7,6 +7,7 @@
     <script src="Tank.js"></script>
     <script src="ImageLibrary.js" charset="utf-8"></script>
     <script src="AudioLibrary.js" charset="utf-8"></script>
+    <script src="Fase.js" charset="utf-8"></script>
   </head>
   <body>
     <h1>(Duelo)World war 2</h1>
@@ -24,19 +25,26 @@
     imageLibrary.load("tijolo-espinho","tijolo-espinho.png");
     imageLibrary.load("tijolo-laser","tijolo-laser.png");
     imageLibrary.load("asteroides","Asteroides.png");
-
     var audioLibrary = new AudioLibrary();
     audioLibrary.load("photon-Gunshot","Photon_Gunshot.mp3");
-
 
     var dt = anterior = 0;
     var player = new Tank();
     var player_2 = new Tank();
     var playerVel = 175;
     var tiroVel = 400;
-    var estado = 2;
+    var estado = 0;               //Default - 2
     var tempoGameOver = 5;
     var armadilhas = [];
+    var atingiu = false;                                  //Variavel para o teste da colisao do tiro com armadilha, ao colidir com uma armadilha ele estava
+                                                          //sendo removido e abaixo estava comparando um objeto vazio com o player
+
+    //Criação de fases
+    var numFases = 4;
+    var faseEscolhida = 0;
+    var fases = [];
+
+    //15 blocos(largura) x 10 blocos(altura) de 32x32
 
     //Main Menu campos
     var fontMainMenu = "30px Arial Black";
@@ -72,19 +80,33 @@
             player = new Tank();
             player.tiro = 0;
             player_2 = new Tank();
+            player_2.tiro = 0;
+
             player.x = player.posInicialX = (tela.width/2 - 15);
             player.y = player.posInicialY = (tela.height - 30);
             player_2.x = player_2.posInicialX = (100 - 15);
             player_2.y = player_2.posInicialY = (100 - 30);
+            criarFases();
+            selecionarFase(player, player_2);
+
+
+
 
             //Cria armadilhas
             //Teste
-            for(var i = 0; i < 5; i++){
+            /*for(var i = 0; i < 10; i++){
               var armadilha = new Sprite();
               armadilha.x = Math.floor(Math.random() * (tela.width - 32));
               armadilha.y = Math.floor(Math.random() * (tela.height - 32));
+              while((player.colidiuCom(armadilha)==true)||(player_2.colidiuCom(armadilha)==true)){
+                armadilha.x = Math.floor(Math.random() * (tela.width - 32));
+                armadilha.y = Math.floor(Math.random() * (tela.height - 32));
+              }
               armadilhas.push(armadilha);
-            }
+            }*/
+            //selecionaFase();
+            //4 tipos de fase
+            //criaFases();
 
             estado = 1;
 
@@ -107,7 +129,7 @@
                 player_2.tiros[i].mover(dt);
             }
 
-            var atingiu = false;                                  //Variavel para o teste da colisao do tiro com armadilha, ao colidir com uma armadilha ele estava sendo removido e abaixo estava comparando um objeto vazio com o player
+            atingiu = false;
 
             for(var i = 0; i < player.tiros.length; i++){         //Teste da colisão dos tiros do primeiro player com as armadilhas
               for(var j = 0; j < armadilhas.length; j++){
@@ -116,7 +138,6 @@
                   atingiu = true;
                   break;
                 }
-
               }
               if(atingiu == false){
                 if(player_2.imunidade <= 0 && player.tiros[i].colidiuCom(player_2)){           //Tiro colidiu com o outro player
@@ -127,6 +148,7 @@
               }
               atingiu = false;
             }
+
             atingiu = false;
             for(var i = 0; i < player_2.tiros.length; i++){       //Teste da colisão dos tiros do segundo player com as armadilhas
               for(var j = 0; j < armadilhas.length; j++){         //Colisao com as armadilhas
@@ -145,7 +167,7 @@
               }
               atingiu = false;
             }
-
+            atingiu = false;
             for(var i = 0; i < armadilhas.length; i++){
               if(player.imunidade <= 0 && player.colidiuCom(armadilhas[i])){
                 player.imunidade = 3;
@@ -213,7 +235,7 @@
             ctx.fillStyle = wordsColor;
             ctx.textAlign = alignMainMenu;
             ctx.font = "40px Arial Black";
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.strokeStyle = "black";
             ctx.strokeText("World War 2", tela.width/2, tela.height/3);
             ctx.fillText("World War 2", tela.width/2, tela.height/3);
@@ -275,9 +297,113 @@
     }
 
 
-    function controlaVelocidadePlayer(vel){
-      playerVel = vel;
+    function selecionarFase(player, player_2){
+      faseEscolhida = Math.floor(Math.random()*(numFases-1));
+      switch(faseEscolhida){
+        case 0:
+
+          break;
+        case 1:
+
+          break;
+        case 2:
+
+          break;
+        default:
+
+      }
     }
+
+    function criarFases(){
+      //TAMANHO DO MAPA - bloco 32x32
+      // 15 blocos em X
+      // 10 blocos em Y
+
+      //Fase 1
+      var fase1 = new Fase();
+      player.x = player.posInicialX = 0;
+      player.y = player.posInicialY = 4*32;
+      player_2.x = player_2.posInicialX = 14*32;
+      player_2.y = player_2.posInicialY = 5*32;
+      fase1.posInicialXPlayer1 = 0;
+      fase1.posInicialYPlayer1 = 4*32;
+      fase1.posInicialXPlayer2 = 14*32;
+      fase1.posInicialYPlayer2 = 5*32;
+
+      criaArmadilhaPorBloco(fase1.armadilhas, 3, 1);
+      criaArmadilhaPorBloco(fase1.armadilhas, 4, 1);
+      criaArmadilhaPorBloco(fase1.armadilhas, 3, 2);
+      criaArmadilhaPorBloco(fase1.armadilhas, 3, 3);
+      criaArmadilhaPorBloco(fase1.armadilhas, 9, 0);
+      criaArmadilhaPorBloco(fase1.armadilhas, 10, 1);
+      criaArmadilhaPorBloco(fase1.armadilhas, 1, 6);
+      criaArmadilhaPorBloco(fase1.armadilhas, 1, 7);
+      criaArmadilhaPorBloco(fase1.armadilhas, 7, 5);
+      criaArmadilhaPorBloco(fase1.armadilhas, 7, 4);
+      criaArmadilhaPorBloco(fase1.armadilhas, 8, 6);
+      criaArmadilhaPorBloco(fase1.armadilhas, 4, 8);
+      criaArmadilhaPorBloco(fase1.armadilhas, 5, 9);
+      criaArmadilhaPorBloco(fase1.armadilhas, 11, 2);
+      criaArmadilhaPorBloco(fase1.armadilhas, 11, 3);
+      criaArmadilhaPorBloco(fase1.armadilhas, 11, 8);
+      criaArmadilhaPorBloco(fase1.armadilhas, 12, 9);
+      criaArmadilhaPorBloco(fase1.armadilhas, 9, 5);
+      criaArmadilhaPorBloco(fase1.armadilhas, 13, 1);
+      //armadilhas = fase1.armadilhas;
+
+      var fase2 = new Fase();
+
+      criaArmadilhaPorBloco(fase2.armadilhas, 0, 0);
+      criaArmadilhaPorBloco(fase2.armadilhas, 0, 1);
+      criaArmadilhaPorBloco(fase2.armadilhas, 0, 2);
+      criaArmadilhaPorBloco(fase2.armadilhas, 3, 2);
+      criaArmadilhaPorBloco(fase2.armadilhas, 3, 3);
+      criaArmadilhaPorBloco(fase2.armadilhas, 3, 4);
+      criaArmadilhaPorBloco(fase2.armadilhas, 14, 0);
+      criaArmadilhaPorBloco(fase2.armadilhas, 14, 1);
+      criaArmadilhaPorBloco(fase2.armadilhas, 14, 2);
+      criaArmadilhaPorBloco(fase2.armadilhas, 6, 0);
+      criaArmadilhaPorBloco(fase2.armadilhas, 7, 1);
+      criaArmadilhaPorBloco(fase2.armadilhas, 2, 6);
+      criaArmadilhaPorBloco(fase2.armadilhas, 0, 9);
+      criaArmadilhaPorBloco(fase2.armadilhas, 14, 9);
+      criaArmadilhaPorBloco(fase2.armadilhas, 5, 8);
+      criaArmadilhaPorBloco(fase2.armadilhas, 11, 3);
+      criaArmadilhaPorBloco(fase2.armadilhas, 12, 4);
+      criaArmadilhaPorBloco(fase2.armadilhas, 12, 7);
+      criaArmadilhaPorBloco(fase2.armadilhas, 7, 9);
+      criaArmadilhaPorBloco(fase2.armadilhas, 7, 5);
+
+      armadilhas = fase2.armadilhas;
+      /*armadilhas[0].x = 120;
+      armadilhas[0].y = 42;
+      armadilhas[1].x = 120;
+      armadilhas[1].y = 74;
+      armadilhas[2].x = 152;
+      armadilhas[2].y = 42;
+      armadilhas[3].x = 120;
+      armadilhas[3].y = 106;*/
+
+
+      //Fase 2
+
+
+      //Fase 3
+
+    }
+
+    function criaArmadilha(armadilhas, x, y){
+      this.armadilhas.push(new Sprite());
+      this.armadilhas[this.armadilhas.length-1].x = x;
+      this.armadilhas[this.armadilhas.length-1].y = y;
+    }
+
+    function criaArmadilhaPorBloco(armadilhas, blocosX, blocosY){
+      armadilhas.push(new Sprite());
+      armadilhas[armadilhas.length-1].x = blocosX*32;
+      armadilhas[armadilhas.length-1].y = blocosY*32;
+    }
+
 
     requestAnimationFrame(passo);
 
