@@ -11,8 +11,10 @@
   </head>
   <body>
     <h1>(Duelo)World war 2</h1>
+
     <canvas width="480" height="320">
       Seu browser não suporta canvas!</canvas>
+      <h3>Instrução:<br>Jogador 1: Move - setas; Atira - Espaço;<br>Jogador 2: Move - W,A,S,D; Atira - Shift esquerdo;</h3>
     <script>
 
     var tela = document.getElementsByTagName("canvas")[0];
@@ -20,25 +22,23 @@
     var imageLibrary = new ImageLibrary();
     imageLibrary.load("menu", "menu.jpg");
     imageLibrary.load("fundo-fase", "fundo-fase.jpg");
-    imageLibrary.load("player-ship", "player_ship.png");
-    imageLibrary.load("asteroides","Asteroides.png");
+    imageLibrary.load("tank", "Tank.png");
+    imageLibrary.load("tank-bullet", "bullet.png");
     imageLibrary.load("tijolo-espinho","tijolo-espinho.png");
     imageLibrary.load("tijolo-laser","tijolo-laser.png");
-    imageLibrary.load("asteroides","Asteroides.png");
     var audioLibrary = new AudioLibrary();
-    audioLibrary.load("photon-Gunshot","Photon_Gunshot.mp3");
+    audioLibrary.load("tank-firing","Tank_Firing.mp3");
 
     var dt = anterior = 0;
     var player = new Tank();
     var player_2 = new Tank();
-    var playerVel = 175;
+    var playerVel = 150;
     var tiroVel = 400;
-    var estado = 0;               //Default - 2
+    var estado = 2;               //Default - 2
     var tempoGameOver = 5;
     var armadilhas = [];
     var atingiu = false;                                  //Variavel para o teste da colisao do tiro com armadilha, ao colidir com uma armadilha ele estava
                                                           //sendo removido e abaixo estava comparando um objeto vazio com o player
-
     //Criação de fases
     var numFases = 3;
     var faseEscolhida = 0;
@@ -54,12 +54,11 @@
 
     /**************************************************
       *           Estados:
-      * 0 - CriaPlayer;     //Estado responsável por criar um novo player apenas;
-      * 1 - ReparaElementos;//Ajusta determinados elementos do jogo, como pontos e posições de elementos e ajusta as vidas
-      * 2 - Jogando;        //Durante a partida
-      * 3 - Menu;           //Main menu tem duas opções: "new game" e "quit";
-      * 4 - Game over;      //Exibe uma mensagem de game over na tela
-      * 5 - Fechado;        //Tela preta
+      * 0 - CarregarElementos;    //Estado responsável criar os players e carregar os elementos da fase
+      * 1 - Jogando;              //Durante a partida
+      * 2 - Menu;                 //Main menu tem duas opções: "new game" e "quit";
+      * 3 - Vitória;              //Exibe uma mensagem informando quem foi o vencedor
+      * 4 - Fechado;              //Tela preta
       ***************************************************/
       criarFases();
 
@@ -86,6 +85,8 @@
             player.y = player.posInicialY = 4*32;
             player_2.x = player_2.posInicialX = 14*32;
             player_2.y = player_2.posInicialY = 5*32;
+            player.sentido = 1;
+            player_2.sentido = 1;
             estado = 1;
 
             break;
@@ -122,6 +123,12 @@
                   player.tiros.splice(i, 1);
                   player_2.imunidade = 3;
                   player_2.vidas--;
+                  player.x = player.posInicialX;
+                  player.y = player.posInicialY;
+                  player_2.x = player_2.posInicialX;
+                  player_2.y = player_2.posInicialY;
+                  player.sentido = 1;
+                  player_2.sentido = 1;
                 }
               }
               atingiu = false;
@@ -141,6 +148,12 @@
                   player_2.tiros.splice(i, 1);
                   player.imunidade = 3;
                   player.vidas--;
+                  player.x = player.posInicialX;
+                  player.y = player.posInicialY;
+                  player_2.x = player_2.posInicialX;
+                  player_2.y = player_2.posInicialY;
+                  player.sentido = 1;
+                  player_2.sentido = 1;
                 }
               }
               atingiu = false;
@@ -152,12 +165,20 @@
                 player.vidas--;
                 player.x = player.posInicialX;
                 player.y = player.posInicialY;
+                player_2.x = player_2.posInicialX;
+                player_2.y = player_2.posInicialY;
+                player.sentido = 1;
+                player_2.sentido = 1;
               }
               if(player_2.imunidade <= 0 && player_2.colidiuCom(armadilhas[i])){
                 player_2.imunidade = 3;
                 player_2.vidas--;
+                player.x = player.posInicialX;
+                player.y = player.posInicialY;
                 player_2.x = player_2.posInicialX;
                 player_2.y = player_2.posInicialY;
+                player.sentido = 1;
+                player_2.sentido = 1;
               }
             }
 
@@ -167,7 +188,7 @@
 
             for (var i = 0; i < player.tiros.length; i++) {
               if((player.tiros[i].x >= 0) && (player.tiros[i].x <= tela.width) && (player.tiros[i].y >= 0) && (player.tiros[i].y <= tela.height)){
-                player.tiros[i].desenhar(ctx);
+                player.tiros[i].desenharTiro(ctx);
               }
               else{                     //Tiros que estão fora do canvas são removidos pois não terão mais funcionalidade
                 player.tiros.splice(i,1);
@@ -176,7 +197,7 @@
 
             for (var i = 0; i < player_2.tiros.length; i++) {
               if((player_2.tiros[i].x >= 0) && (player_2.tiros[i].x <= tela.width) && (player_2.tiros[i].y >= 0) && (player_2.tiros[i].y <= tela.height)){
-                player_2.tiros[i].desenhar(ctx);
+                player_2.tiros[i].desenharTiro(ctx);
               }
               else{                     //Tiros que estão fora do canvas são removidos pois não terão mais funcionalidade
                 player_2.tiros.splice(i,1);
@@ -193,11 +214,18 @@
             ctx.fillText("Player 1", 60, 20);
             ctx.strokeText("Vidas:  "+ player.vidas, 55, 50);
             ctx.fillText("Vidas:  "+ player.vidas, 55, 50);
+            ctx.font = "15px Arial Black";
+            ctx.strokeText("1", player.x+player.w/2, player.y - 5);
+            ctx.fillText("1", player.x+player.w/2, player.y - 5);
+            ctx.font = "20px Arial Black";
             ctx.fillStyle = "blue";
             ctx.strokeText("Player 2", tela.width - 70, 20);
             ctx.fillText("Player 2", tela.width - 70, 20);
             ctx.strokeText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
             ctx.fillText("Vidas:  "+ player_2.vidas, tela.width - 75, 50);
+            ctx.font = "15px Arial Black";
+            ctx.strokeText("2", player_2.x+player_2.w/2, player_2.y - 5);
+            ctx.fillText("2", player_2.x+player_2.w/2, player_2.y - 5);
 
             if((player.vidas == 0)||(player_2.vidas == 0)){
               player.tiros.splice(0,player.tiros.length);
@@ -236,7 +264,7 @@
             }
 
             break;
-          case 3:
+          case 3:                 //Vitória
             limparTela();
             ctx.fillStyle = "white";
             ctx.textAlign = alignMainMenu;
@@ -262,7 +290,7 @@
             }
 
             break;
-          case 3:
+          case 4:             //Fechado
             limparTela();
             break;
           default:
@@ -277,7 +305,7 @@
 
     function selecionarFase(){
       faseEscolhida = Math.floor(Math.random()*(numFases));
-      console.log(faseEscolhida);
+      console.log("Fase: "+ (faseEscolhida+1));
       switch(faseEscolhida){
         case 0:
           armadilhas = fases[0].armadilhas;
@@ -319,7 +347,6 @@
       criaArmadilhaPorBloco(fase1.armadilhas, 4, 8);
       criaArmadilhaPorBloco(fase1.armadilhas, 5, 9);
       criaArmadilhaPorBloco(fase1.armadilhas, 11, 2);
-      criaArmadilhaPorBloco(fase1.armadilhas, 11, 3);
       criaArmadilhaPorBloco(fase1.armadilhas, 11, 8);
       criaArmadilhaPorBloco(fase1.armadilhas, 12, 9);
       criaArmadilhaPorBloco(fase1.armadilhas, 9, 5);
@@ -341,7 +368,6 @@
       criaArmadilhaPorBloco(fase2.armadilhas, 14, 2);
       criaArmadilhaPorBloco(fase2.armadilhas, 6, 0);
       criaArmadilhaPorBloco(fase2.armadilhas, 7, 1);
-      criaArmadilhaPorBloco(fase2.armadilhas, 2, 6);
       criaArmadilhaPorBloco(fase2.armadilhas, 0, 9);
       criaArmadilhaPorBloco(fase2.armadilhas, 14, 9);
       criaArmadilhaPorBloco(fase2.armadilhas, 5, 8);
@@ -365,7 +391,6 @@
       criaArmadilhaPorBloco(fase3.armadilhas, 13, 3);
       criaArmadilhaPorBloco(fase3.armadilhas, 12, 4);
       criaArmadilhaPorBloco(fase3.armadilhas, 14, 8);
-      criaArmadilhaPorBloco(fase3.armadilhas, 2, 6);
       criaArmadilhaPorBloco(fase3.armadilhas, 5, 5);
       criaArmadilhaPorBloco(fase3.armadilhas, 6, 2);
       criaArmadilhaPorBloco(fase3.armadilhas, 8, 4);
@@ -398,13 +423,16 @@
 
     addEventListener("keydown", function(e){
       //console.log(e.keyCode);
+      e.preventDefault();                     //Ignora todos os pré-atalhos do navegador
       if (estado != 2) {
           switch (e.keyCode) {
             case 37:            //esquerda
               player.vx = -playerVel;
+              player.sentido = 3;
               break;
             case 39:            //direita
               player.vx = +playerVel;
+              player.sentido = 1;
               break;
             case 32:            //Espaço
               if(player.tiro <= 0){
@@ -412,22 +440,26 @@
                 var tiro = new Sprite();
                 tiro.posicionarTiro(player, tiroVel);
                 player.tiros.push(tiro);
-                audioLibrary.play("photon-Gunshot");
+                audioLibrary.play("tank-firing");
                 tiro.colorBG = 'red';
                 player.tiro = 0.5;
               }
               break;
             case 38:          //Cima
               player.vy = -playerVel;
+              player.sentido = 0;
               break;
             case 40:          //Baixo
               player.vy = +playerVel;
+              player.sentido = 2;
               break;
             case 65:            //A
               player_2.vx = -playerVel;
+              player_2.sentido = 3;
               break;
             case 68:            //D
               player_2.vx = +playerVel;
+              player_2.sentido = 1;
               break;
             case 16:            //Espaço
               if(player_2.tiro <= 0){
@@ -435,16 +467,18 @@
                 var tiro = new Sprite();
                 tiro.posicionarTiro(player_2, tiroVel);
                 player_2.tiros.push(tiro);
-                audioLibrary.play("photon-Gunshot");
+                audioLibrary.play("tank-firing");
                 tiro.colorBG = 'red';
                 player_2.tiro = 0.5;
               }
               break;
             case 87:            //W
               player_2.vy = -playerVel;
+              player_2.sentido = 0;
               break;
             case 83:            //S
               player_2.vy = +playerVel;
+              player_2.sentido = 2;
               break;
             case 27:      //Pressionar o Esq
               player.tiros.splice(0,player.tiros.length);
@@ -501,18 +535,22 @@
       switch (e.keyCode) {
         case 37:
         case 39:
+          if(player!=null)
           player.vx = 0;
           break;
         case 38:
         case 40:
+          if(player!=null)
           player.vy = 0;
           break;
         case 65:
         case 68:
+          if(player_2!=null)
           player_2.vx = 0;
           break;
         case 87:
         case 83:
+          if(player_2!=null)
           player_2.vy = 0;
           break;
         default:

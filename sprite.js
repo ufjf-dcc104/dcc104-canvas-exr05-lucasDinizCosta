@@ -26,6 +26,12 @@ Sprite.prototype.desenhar = function (ctx) {
   ctx.strokeRect(this.x, this.y, this.w, this.h);
 }
 
+Sprite.prototype.desenharTiro = function (ctx) {
+  this.w = 16;
+  this.h = 16;
+  imageLibrary.draw(ctx, "tank-bullet", this.x, this.y);
+}
+
 Sprite.prototype.desenharArmadilha = function (ctx) {
   this.w = 32;
   this.h = 32;
@@ -51,8 +57,8 @@ Sprite.prototype.desenharArmadilha = function (ctx) {
 }
 
 Sprite.prototype.posicionarTiro = function (jogador, tiroVel) {
-  this.w = 5;
-  this.h = 5;
+  this.w = 16;
+  this.h = 16;
   switch (jogador.sentido) {
     case 0:     //Cima
       this.x = jogador.x + jogador.w/2 - 2;

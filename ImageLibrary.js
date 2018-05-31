@@ -27,6 +27,7 @@ ImageLibrary.prototype.drawSize = function (ctx, key, x, y, w, h) {
 ImageLibrary.prototype.drawAngle = function(ctx, key, x, y, ang){
   ctx.save();
   ctx.translate(x, y);
+  //ctx.save();
   ctx.rotate(ang*Math.PI/180);
   //ctx.fillStyle = "white";
   //ctx.fillRect(-this.images[key].width/2,-this.images[key].width/2,this.images[key].width,this.images[key].height);

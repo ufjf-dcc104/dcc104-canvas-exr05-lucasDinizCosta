@@ -1,8 +1,8 @@
 function Tank() {
   this.x = 100;
   this.y = 100;
-  this.w = 20;
-  this.h = 30;
+  this.w = 32;
+  this.h = 32;
   this.vx = 0;
   this.vy = 0;
   this.acel = 0;
@@ -15,6 +15,7 @@ function Tank() {
   this.sentido = 0;                        //0-> cima, 1-> direita, 2->baixo 3->esquerda
   this.posInicialX = 0;                   //Posição inicial do tanque
   this.posInicialY = 0;
+  this.ang = 0;                           //angulo da imagem
 }
 
 Tank.prototype.desenhar = function (ctx) {
@@ -43,16 +44,48 @@ Tank.prototype.desenharImagem = function (ctx) {
   if(this.imunidade > 0){
     ctx.save();
     ctx.globalAlpha = 0.5;            //Muda a transparência da imagem, mostrando que o personagem está imune temporareamente
-    imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
+    switch (this.sentido) {
+      case 0:
+        this.ang = 0;
+        break;
+      case 1:
+        this.ang = 90;
+        break;
+      case 2:
+        this.ang = 180;
+        break;
+      case 3:
+        this.ang = -90;
+        break;
+      default:
+
+    }
+
+    imageLibrary.drawAngle(ctx, "tank", this.x+this.w/2, this.y+this.h/2, this.ang);         //Como a rotação é no meio da imagem então tenho que passar o centro dela
+
     ctx.restore();
   }
   else{
-    imageLibrary.drawSize(ctx, "player-ship", this.x, this.y, this.w, this.h);
-  }
-}
+    switch (this.sentido) {
+      case 0:
+        this.ang = 0;
+        break;
+      case 1:
+        this.ang = 90;
+        break;
+      case 2:
+        this.ang = 180;
+        break;
+      case 3:
+        this.ang = -90;
+        break;
+      default:
 
-Tank.prototype.rotacionar = function (ctx, graus){
-  ctx.rotate(graus*Math.PI/180);
+    }
+    /*ctx.fillStyle = "red";
+    ctx.fillRect(this.x,this.y,this.w,this.h);*/
+    imageLibrary.drawAngle(ctx, "tank", this.x+this.w/2, this.y+this.h/2, this.ang);         //Como a rotação é no meio da imagem então tenho que passar o centro dela
+  }
 }
 
 Tank.prototype.mover = function (dt) {
